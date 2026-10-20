@@ -1,0 +1,63 @@
+/* Tema negro + rojo 800 (Material #c62828). Para otro rojo, cambiá solo --brand. */
+:root {
+  --brand: #c62828;
+  --brand-hover: #b71c1c;
+  --brand-active: #8e1515;
+}
+
+[data-bs-theme="dark"] {
+  --bs-body-bg: #0a0a0a;
+  --bs-body-color: #e8e8e8;
+  --bs-secondary-bg: #141414;
+  --bs-tertiary-bg: #1a1a1a;
+  --bs-border-color: #2a2a2a;
+  --bs-link-color: #ef5350;
+  --bs-link-hover-color: #ff867c;
+  --bs-primary: var(--brand);
+  --bs-primary-rgb: 198, 40, 40;
+}
+
+body { background: var(--bs-body-bg); }
+
+/* Botones principales */
+.btn-primary {
+  --bs-btn-bg: var(--brand);
+  --bs-btn-border-color: var(--brand);
+  --bs-btn-hover-bg: var(--brand-hover);
+  --bs-btn-hover-border-color: var(--brand-hover);
+  --bs-btn-active-bg: var(--brand-active);
+  --bs-btn-active-border-color: var(--brand-active);
+  --bs-btn-disabled-bg: var(--brand);
+  --bs-btn-disabled-border-color: var(--brand);
+  --bs-btn-color: #fff;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-color: #fff;
+}
+
+.btn-outline-secondary {
+  --bs-btn-color: #cfcfcf;
+  --bs-btn-border-color: #444;
+  --bs-btn-hover-bg: var(--brand);
+  --bs-btn-hover-border-color: var(--brand);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-bg: var(--brand-active);
+  --bs-btn-active-border-color: var(--brand-active);
+}
+
+/* Casillas, foco de inputs y fila seleccionada */
+.form-check-input:checked {
+  background-color: var(--brand);
+  border-color: var(--brand);
+}
+.form-control:focus, .form-select:focus, .form-check-input:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 .2rem rgba(198, 40, 40, .3);
+}
+.table-primary {
+  --bs-table-bg: rgba(198, 40, 40, .25);
+  --bs-table-color: #fff;
+  --bs-table-border-color: rgba(198, 40, 40, .4);
+}
+
+header.bg-dark { background: #000 !important; border-bottom: 2px solid var(--brand); }
+.table-light { --bs-table-bg: #1a1a1a; --bs-table-color: #e8e8e8; }
