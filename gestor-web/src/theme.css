@@ -1,4 +1,6 @@
 /* Tema negro + rojo 800 (Material #c62828). Para otro rojo, cambiá solo --brand. */
+
+/*
 :root {
   --brand: #c62828;
   --brand-hover: #b71c1c;
@@ -19,7 +21,7 @@
 
 body { background: var(--bs-body-bg); }
 
-/* Botones principales */
+Botones principales 
 .btn-primary {
   --bs-btn-bg: var(--brand);
   --bs-btn-border-color: var(--brand);
@@ -44,7 +46,7 @@ body { background: var(--bs-body-bg); }
   --bs-btn-active-border-color: var(--brand-active);
 }
 
-/* Casillas, foco de inputs y fila seleccionada */
+Casillas, foco de inputs y fila seleccionada 
 .form-check-input:checked {
   background-color: var(--brand);
   border-color: var(--brand);
@@ -60,4 +62,4 @@ body { background: var(--bs-body-bg); }
 }
 
 header.bg-dark { background: #000 !important; border-bottom: 2px solid var(--brand); }
-.table-light { --bs-table-bg: #1a1a1a; --bs-table-color: #e8e8e8; }
+.table-light { --bs-table-bg: #1a1a1a; --bs-table-color: #e8e8e8; }*/

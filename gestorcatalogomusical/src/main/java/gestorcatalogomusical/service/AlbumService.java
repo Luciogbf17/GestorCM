@@ -61,7 +61,7 @@ public class AlbumService implements StructService <Album,Long> {
 
        a.setName(album.getName());
        a.setAmountsongs(album.getAmountsongs());
-       a.setRelease(album.getRelease());
+       a.setRelease_date(album.getRelease_date());
        a.setBand(album.getBand());
        return repo.save(a);
     }

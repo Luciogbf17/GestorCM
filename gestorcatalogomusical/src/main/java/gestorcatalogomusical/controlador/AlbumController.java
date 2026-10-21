@@ -16,7 +16,7 @@ public class AlbumController extends BaseController<Album,Long>{
     }
 
 
-    @PostMapping("/")
+    @PostMapping
     public Album create(@RequestBody Album a) { return service.add(a); }
 
     @PutMapping("/{id}")

@@ -28,6 +28,6 @@ public class Album {
     private Band band;
     private String genere;
     private String name;
-    private LocalDate release;
+    private LocalDate release_date;
     private int amountsongs;
 }

@@ -13,7 +13,7 @@ public class BandController extends BaseController<Band,Long>{
         super(service);
     }
 
-    @PostMapping("/")
+    @PostMapping
     public Band create(@RequestBody Band b) { return service.add(b); }
 
     @PutMapping("/{id}")
