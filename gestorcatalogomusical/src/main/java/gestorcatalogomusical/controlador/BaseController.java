@@ -14,7 +14,7 @@ public abstract class BaseController<T, ID> {
         this.service = service;
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public List<T> findAll(){ return service.findAll(); }
 
     @GetMapping("/search")

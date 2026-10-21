@@ -1,101 +1,78 @@
-package gestorcatalogomusical.model;// Ajusta a tu paquete
+package gestorcatalogomusical.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Table(name = "playlists")
-@Data
+@Table(name = "spotify_playlist")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@ToString
 public class Playlist {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-    @Column(name = "title", length = 255)
+    @Column(name = "title", columnDefinition = "TEXT")
     private String title;
 
-
-    @Column(name = "apple_music", length = 255)
+    @Column(name = "apple_music", columnDefinition = "TEXT")
     private String appleMusic;
 
-
-    @Column(name = "contact", nullable = false, length = 150)
+    @Column(name = "contact", columnDefinition = "TEXT")
     private String contact;
 
-
-    @Column(name = "deezer", length = 255)
+    @Column(name = "deezer", columnDefinition = "TEXT")
     private String deezer;
 
-
-    @Column(name = "description", length = 1000) // O puedes usar: columnDefinition = "TEXT"
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-
-    @Column(name = "email_address", length = 150)
+    @Column(name = "email_address", length = 255)
     private String emailAddress;
 
-
-    @Column(name = "facebook", length = 255)
+    @Column(name = "facebook", columnDefinition = "TEXT")
     private String facebook;
 
-
-    @Column(name = "followers", nullable = false)
+    @Column(name = "followers")
     private Integer followers;
 
-
-    @Column(name = "genres", nullable = false, length = 255)
+    @Column(name = "genres", columnDefinition = "TEXT")
     private String genres;
 
-
-    @Column(name = "instagram", length = 255)
+    @Column(name = "instagram", columnDefinition = "TEXT")
     private String instagram;
 
-
-    @Column(name = "linkedin", length = 255)
+    @Column(name = "linkedin", columnDefinition = "TEXT")
     private String linkedIn;
 
-
-    @Column(name = "location", length = 100)
+    @Column(name = "location", length = 255)
     private String location;
 
-
-    @Column(name = "playlist_url", length = 255)
+    @Column(name = "playlist_url", columnDefinition = "TEXT")
     private String playlistUrl;
 
+    @Column(name = "playlists_count")
+    private Integer playlistsCount;
 
-    @Column(name = "playlists_count", nullable = false)
-    private Integer playlists;
-
-
-    @Column(name = "property")
+    @Column(name = "property", columnDefinition = "TEXT")
     private String property;
 
-
-    @Column(name = "soundcloud", length = 255)
+    @Column(name = "soundcloud", columnDefinition = "TEXT")
     private String soundCloud;
 
-
-    @Column(name = "submission_page", length = 255)
+    @Column(name = "submission_page", columnDefinition = "TEXT")
     private String submissionPage;
 
-
-    @Column(name = "twitter", length = 100)
+    @Column(name = "twitter", columnDefinition = "TEXT")
     private String twitter;
 
-
-    @Column(name = "website", length = 255)
+    @Column(name = "website", columnDefinition = "TEXT")
     private String website;
 
-
-    @Column(name = "youtube", length = 255)
+    @Column(name = "youtube", columnDefinition = "TEXT")
     private String youtube;
 }

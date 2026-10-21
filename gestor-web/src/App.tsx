@@ -1,5 +1,6 @@
 import { useState } from "react";
-import PitchPlaylist from "./views/PitchPlaylist"; 
+import PitchPlaylist from "./views/PitchPlaylist";
+import CatalogAdmin from "./views/CatalogAdmin";
 
 type View = "menu" | "catalogo" | "pitch" | "contactos";
 
@@ -18,12 +19,9 @@ function Placeholder({ title, onBack }: { title: string; onBack: () => void }) {
 function App() {
   const [view, setView] = useState<View>("menu");
   const back = () => setView("menu");
-
-  if (view === "pitch") return <PitchPlaylist onBack={back} />;
-  if (view === "catalogo")
-    return <Placeholder title="Administrador de catálogo" onBack={back} />;
-  if (view === "contactos")
-    return <Placeholder title="Administrador de contactos" onBack={back} />;
+  if (view === "pitch") return (<PitchPlaylist onBack={back} />);
+  if (view === "catalogo") return (<CatalogAdmin onBack={back} />);
+  if (view === "contactos")return <Placeholder title="Administrador de contactos" onBack={back} />;
 
   return (
     <>
