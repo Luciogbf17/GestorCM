@@ -1,6 +1,6 @@
 import {  useState,useEffect } from "react";
-import { bandsApi} from "../api/client"
-import type {Band} from "../api/client"
+import { albumApi, bandsApi,songApi} from "../api/client"
+import type {Album, Band,Song} from "../api/client"
 
 
 
@@ -12,7 +12,8 @@ const handleImgError= (e)=>{
 
 
 const [bands,setBands] = useState<Band[]>([]);    // crea un vector llamado bands
-const [songs,setSongs] = useState<any[]>([]);
+const [songs,setSongs] = useState<Song[]>([]);
+const [albums,setAlbums] = useState<Album[]>([]);
 
 useEffect(() => {
     // Al meterlo dentro de useEffect con [], SOLO se ejecuta una vez al cargar la pantalla
@@ -20,9 +21,15 @@ useEffect(() => {
       .then(data => setBands(data))
       .catch(err => console.error(err));
 
-    // TODO: acá conectar tu API de temas, por ejemplo:
-    // songsApi.findAll().then(data => setSongs(data)).catch(err => console.error(err));
-  }, []); // rellena el vector con los datos de la db
+    songApi.findAll()
+    .then(data => setSongs(data))
+    .catch(err => console.error(err));
+
+    albumApi.findAll()
+    .then (data => setAlbums(data) )
+    .catch(err => console.error(err));
+
+  }, []);// rellena el vector con los datos de la db
 
 
 
@@ -43,10 +50,19 @@ useEffect(() => {
               <div className="col-md-8">
                 <div className="row g-2">
 
-                  <div className="col-12 form-field">
+                  <div className="col-sm-6 form-field">
                     <label htmlFor="fieldBanda" className="form-label small mb-1">Banda</label>
                     <select className="form-select form-select-sm" id="fieldBanda">
                       { bands.map((o)=>(
+                        <option key={o.id} value={o.id}>{o.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="col-sm-6 form-field">
+                    <label htmlFor="fieldAlbum" className="form-label small mb-1">Album</label>
+                    <select className="form-select form-select-sm" id="fieldAlbum">
+                      { albums.map((o)=>(
                         <option key={o.id} value={o.id}>{o.name}</option>
                       ))}
                     </select>
@@ -133,9 +149,9 @@ useEffect(() => {
                 <tr key={s.id}>
                   <th scope="row">{s.id}</th>
                   <td>{s.name}</td>
-                  <td>{s.band}</td>
-                  <td>{s.genre}</td>
-                  <td>{s.releaseDate}</td>
+                  <td>{s.band.name}</td>
+                  <td>{s.genere}</td>
+                  <td>{s.release}</td>
                   <td>{s.isrc}</td>
                 </tr>
               ))
