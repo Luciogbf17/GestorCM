@@ -58,7 +58,7 @@ public class SongService implements StructService<Song, Long> {
         s.setAlbum(song.getAlbum());
         s.setBand(song.getBand());
         s.setIsrc(song.getIsrc());
-        s.setRelease(song.getRelease());
+        s.setRelease_date(song.getRelease_date());
         s.setAppleurl(song.getAppleurl());
         s.setYoutubeurl(song.getYoutubeurl());
         s.setSpotifyurl(song.getSpotifyurl());
