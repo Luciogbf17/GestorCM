@@ -17,10 +17,11 @@ const [guardando,setGuardando] = useState(false);
 const [cantidadCanciones,setCantidadCanciones] = useState<formCancioncantidad[]>([])
 
 
-function AgregarCancion(){
-  const i= Date.now();
-  setCantidadCanciones([...cantidadCanciones, {id: i }]);
-}
+const agregarCancion = () =>
+  setCantidadCanciones(prev => [...prev, nuevaCancion()]);
+
+const quitarCancion = (id: number) =>
+  setCantidadCanciones(prev => prev.filter(c => c.id !== id));
 
 useEffect(() => {
     // Al meterlo dentro de useEffect con [], SOLO se ejecuta una vez al cargar la pantalla
@@ -104,15 +105,16 @@ useEffect(() => {
                 </button>
             </div>
 
+            <div id="formCancion" className="row">
+                  <div className="col">
+                    <button type="button" className="btn btn-outline-danger" onClick={() => quitarCancion(i)} disabled={canciones.length === 1} aria-label="Quitar cancion">
+                    </button>
+                  </div>
 
-            
-              {cantidadCanciones.map(()=>(
-                <div id="formCancion" className="row">
-                
-                  <div className="col form-field">
-                    <label htmlFor="fieldNombre" className="form-label small mb-1">Nombre Cancion</label>
+                  <div className="col">
+                    <label htmlFor="fieldNombre" className="form-label small mb-1">Nombre</label>
                     <input name="name"          value={songform.name}      onChange={handleChange}       id="fieldNombre"     className="form-control form-control-sm"  placeholder="Nombre"/>
-                  
+                  </div>
 
                   <div className="col">
                     <label htmlFor="fieldGenero" className="form-label small mb-1">Genero</label>
@@ -143,14 +145,53 @@ useEffect(() => {
                     <label htmlFor="fieldYoutube" className="form-label small mb-1">Youtube</label>
                     <input name="youtubeurl" value={songform.youtubeurl}      onChange={handleChange} className="form-control form-control-sm" id="fieldYoutube" placeholder="UrlYoutube"/>
                   </div>
-
                 </div>
 
 
-          
-              
+                      
+              {cantidadCanciones.map(()=>(
+                <div id="formCancion" className="row">
                 
-          </div>))}
+                  <div className="col">
+                    
+                    <input name="name"          value={songform.name}      onChange={handleChange}       id="fieldNombre"     className="form-control form-control-sm"  placeholder="Nombre"/>
+                  </div>
+
+                  <div className="col">
+                    
+                    <input name="genere" value={songform.genere}      onChange={handleChange} className="form-control form-control-sm" id="fieldGenero" placeholder="genero"/>
+                  </div>
+
+                  <div className="col">
+                    
+                    <input name="release" value={songform.release}      onChange={handleChange} type="date" className="form-control form-control-sm" id="fieldLanzamiento" aria-label="Date picker" />
+                  </div>
+
+                  <div className="col">
+                    
+                    <input name="isrc" value={songform.isrc}      onChange={handleChange} className="form-control form-control-sm" id="fielISRC" placeholder="codigo Isrc"/>
+                  </div>
+
+                  <div className="col">
+                    
+                    <input name="spotifyurl" value={songform.spotifyurl}      onChange={handleChange} className="form-control form-control-sm" id="fieldSpotify" placeholder="UrlSpotify"/>
+                  </div>
+
+                  <div className="col">
+                   
+                    <input name="appleurl" value={songform.appleurl}      onChange={handleChange} className="form-control form-control-sm" id="fieldApple" placeholder="UrlApple"/>
+                  </div>
+
+                  <div className="col">
+                    
+                    <input name="youtubeurl" value={songform.youtubeurl}      onChange={handleChange} className="form-control form-control-sm" id="fieldYoutube" placeholder="UrlYoutube"/>
+                  </div>
+
+                </div>))}
+
+
+
+
           <div className="">
                   <button type="submit" className="btn btn-sm btn-outline-secondary w-100" disabled={guardando}> Registrar Tema </button>           
                 </div> 
