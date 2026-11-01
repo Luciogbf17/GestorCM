@@ -1,0 +1,16 @@
+services:
+  db:
+    image: mysql:8
+    container_name: gestorcm-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-changeme}
+      MYSQL_DATABASE: gestorcm
+      TZ: UTC
+    ports:
+      - "3307:3306"
+    volumes:
+      - gestorcm_data:/var/lib/mysql
+
+volumes:
+  gestorcm_data:
