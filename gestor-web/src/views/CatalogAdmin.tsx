@@ -1,19 +1,26 @@
-import {  useState,useEffect } from "react";
+import {  useState,useEffect} from "react";
+import type {ChangeEvent, ChangeEventHandler, FormEvent } from "react";            
 import { albumApi, bandsApi,songApi} from "../api/client"
 import type {Album, Band,Song} from "../api/client"
 
-
-
+ const emptySong: Song = { name: "", isrc: "", genere: "", release: "", band: { id: 0 } };
+ type formCancioncantidad={id: number};
 export default function CatalogoAdmin({ onBack }: { onBack: () => void }){
-const handleImgError= (e)=>{
-  e.target.one = null;
-  e.target.src = 'https://placeholder.com'
-};
+
 
 
 const [bands,setBands] = useState<Band[]>([]);    // crea un vector llamado bands
 const [songs,setSongs] = useState<Song[]>([]);
-const [albums,setAlbums] = useState<Album[]>([]);
+const [albums,setAlbums] = useState<Album[]>([]); 
+const [songform, setSongsform] = useState<Song>(emptySong);
+const [guardando,setGuardando] = useState(false);
+const [cantidadCanciones,setCantidadCanciones] = useState<formCancioncantidad[]>([])
+
+
+function AgregarCancion(){
+  const i= Date.now();
+  setCantidadCanciones([...cantidadCanciones, {id: i }]);
+}
 
 useEffect(() => {
     // Al meterlo dentro de useEffect con [], SOLO se ejecuta una vez al cargar la pantalla
@@ -32,6 +39,28 @@ useEffect(() => {
   }, []);// rellena el vector con los datos de la db
 
 
+  const handleAlbum = (e: ChangeEvent<HTMLSelectElement>) => setSongsform({...songform, album:{id: Number(e.target.value)}});
+  const handleBand =(e : ChangeEvent<HTMLSelectElement>)=>  setSongsform({...songform,band:{id: Number(e.target.value)}});
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault(); 
+    if(songform.band.id === null  ) return alert ("elegi una banda");
+
+    const res = await fetch("http://localhost:8080/api/songs", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(songform) });
+
+      if (!res.ok) return alert("Error al guardar");
+      setSongsform(emptySong);
+};
+  const handleChange = (e:ChangeEvent<HTMLInputElement>) => setSongsform({...songform,[e.target.name]:e.target.value});
+
+  
+ 
+
+
+
+
 
   return (
    <>
@@ -44,83 +73,89 @@ useEffect(() => {
     
    
    <main>
-      <form action="" className="" >
+      <form action="" onSubmit={handleSubmit} >
           <div className="container" style={{ maxWidth: 720 }}>
-            <div className="row g-2">
-              <div className="col-md-8">
-                <div className="row g-2">
+            <div className="row">
+              
 
-                  <div className="col-sm-6 form-field">
-                    <label htmlFor="fieldBanda" className="form-label small mb-1">Banda</label>
-                    <select className="form-select form-select-sm" id="fieldBanda">
+                  
+                    <div className="col">
+                      <label htmlFor="fieldBanda" className="form-label small mb-1">Banda</label>
+                      <select         value={songform.band.id}    onChange={handleBand}         id="fieldBanda"  className="form-select form-select-sm"  >
+                      <option value={0}>Elegir...</option>
                       { bands.map((o)=>(
                         <option key={o.id} value={o.id}>{o.name}</option>
                       ))}
-                    </select>
-                  </div>
+                      </select>
+                    </div>
 
-                  <div className="col-sm-6 form-field">
-                    <label htmlFor="fieldAlbum" className="form-label small mb-1">Album</label>
-                    <select className="form-select form-select-sm" id="fieldAlbum">
-                      { albums.map((o)=>(
-                        <option key={o.id} value={o.id}>{o.name}</option>
-                      ))}
-                    </select>
-                  </div>
+                    <div className="col">
+                      <label htmlFor="fieldalbum" className="form-label small mb-1">Nombre AlBum</label>
+                      <input name="name"          value={songform.album?.name}      onChange={handleChange}       id="fieldNombre"     className="form-control form-control-sm"  placeholder="Nombre"/>
+                    </div>
+                  
+                
 
-                  <div className="col-sm-6 form-field">
-                    <label htmlFor="fieldNombre" className="form-label small mb-1">Nombre</label>
-                    <input className="form-control form-control-sm" id="fieldNombre" placeholder="Nombre"/>
-                  </div>
 
-                  <div className="col-sm-6 form-field">
-                    <label htmlFor="fieldGenero" className="form-label small mb-1">Genero</label>
-                    <input className="form-control form-control-sm" id="fieldGenero" placeholder="genero"/>
-                  </div>
 
-                  <div className="col-sm-6 form-field">
-                    <label htmlFor="fieldLanzamiento" className="form-label small mb-1">Lanzamiento</label>
-                    <input type="date" className="form-control form-control-sm" id="fieldLanzamiento" aria-label="Date picker" value=""/>
-                  </div>
 
-                  <div className="col-sm-6 form-field">
-                    <label htmlFor="fieldISRC" className="form-label small mb-1">ISRC</label>
-                    <input className="form-control form-control-sm" id="fielISRC" placeholder="codigo Isrc"/>
-                  </div>
-
-                  <div className="col-sm-4 form-field">
-                    <label htmlFor="fieldSpotify" className="form-label small mb-1">Spotify</label>
-                    <input className="form-control form-control-sm" id="fieldSpotify" placeholder="UrlSpotify"/>
-                  </div>
-
-                  <div className="col-sm-4 form-field">
-                    <label htmlFor="fieldApple" className="form-label small mb-1">Apple</label>
-                    <input className="form-control form-control-sm" id="fieldApple" placeholder="UrlApple"/>
-                  </div>
-
-                  <div className="col-sm-4 form-field">
-                    <label htmlFor="fieldYoutube" className="form-label small mb-1">Youtube</label>
-                    <input className="form-control form-control-sm" id="fieldYoutube" placeholder="UrlYoutube"/>
-                  </div>
-
-                </div>
-              </div>
-
-              <div className="col-md-4">
-                <div className="mb-3">
-                  <img onError={handleImgError} src="..." className="img-thumbnail mb-2" style={{ maxWidth: 160 }} alt="..."/>
-                  <label htmlFor="formFile" className="form-label small mb-1 d-block">Portada</label>
-                  <input className="form-control form-control-sm" type="file" id="formFile"/>
-                </div>
-                <div className="">
-                  <button className="btn btn-sm btn-outline-secondary w-100" onClick={onBack}>
-                    Registrar Tema
-                  </button>           
-                </div> 
-              </div>
-
+                <button id="btnAgregar" className="btn mt-2" onClick={AgregarCancion}>
+                  Agregar Cancion 
+                </button>
             </div>
-          </div>                      
+
+
+            
+              {cantidadCanciones.map(()=>(
+                <div id="formCancion" className="row">
+                
+                  <div className="col form-field">
+                    <label htmlFor="fieldNombre" className="form-label small mb-1">Nombre Cancion</label>
+                    <input name="name"          value={songform.name}      onChange={handleChange}       id="fieldNombre"     className="form-control form-control-sm"  placeholder="Nombre"/>
+                  
+
+                  <div className="col">
+                    <label htmlFor="fieldGenero" className="form-label small mb-1">Genero</label>
+                    <input name="genere" value={songform.genere}      onChange={handleChange} className="form-control form-control-sm" id="fieldGenero" placeholder="genero"/>
+                  </div>
+
+                  <div className="col">
+                    <label htmlFor="fieldLanzamiento" className="form-label small mb-1">Lanzamiento</label>
+                    <input name="release" value={songform.release}      onChange={handleChange} type="date" className="form-control form-control-sm" id="fieldLanzamiento" aria-label="Date picker" />
+                  </div>
+
+                  <div className="col">
+                    <label htmlFor="fieldISRC" className="form-label small mb-1">ISRC</label>
+                    <input name="isrc" value={songform.isrc}      onChange={handleChange} className="form-control form-control-sm" id="fielISRC" placeholder="codigo Isrc"/>
+                  </div>
+
+                  <div className="col">
+                    <label htmlFor="fieldSpotify" className="form-label small mb-1">Spotify</label>
+                    <input name="spotifyurl" value={songform.spotifyurl}      onChange={handleChange} className="form-control form-control-sm" id="fieldSpotify" placeholder="UrlSpotify"/>
+                  </div>
+
+                  <div className="col">
+                    <label htmlFor="fieldApple" className="form-label small mb-1">Apple</label>
+                    <input name="appleurl" value={songform.appleurl}      onChange={handleChange} className="form-control form-control-sm" id="fieldApple" placeholder="UrlApple"/>
+                  </div>
+
+                  <div className="col">
+                    <label htmlFor="fieldYoutube" className="form-label small mb-1">Youtube</label>
+                    <input name="youtubeurl" value={songform.youtubeurl}      onChange={handleChange} className="form-control form-control-sm" id="fieldYoutube" placeholder="UrlYoutube"/>
+                  </div>
+
+                </div>
+
+
+          
+              
+                
+          </div>))}
+          <div className="">
+                  <button type="submit" className="btn btn-sm btn-outline-secondary w-100" disabled={guardando}> Registrar Tema </button>           
+                </div> 
+          </div>
+                                
       </form>
 
         <div className="container mt-4">
@@ -149,7 +184,7 @@ useEffect(() => {
                 <tr key={s.id}>
                   <th scope="row">{s.id}</th>
                   <td>{s.name}</td>
-                  <td>{s.band.name}</td>
+                  <td >{s.band.name}</td>
                   <td>{s.genere}</td>
                   <td>{s.release}</td>
                   <td>{s.isrc}</td>
