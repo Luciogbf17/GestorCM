@@ -4,27 +4,38 @@ import { albumApi, bandsApi,songApi} from "../api/client"
 import type {Album, Band,Song} from "../api/client"
 
  const emptySong: Song = { name: "", isrc: "", genere: "", release: "", band: { id: 0 } };
- type formCancioncantidad={id: number};
+  type formCancioncantidad={id: number};
+
+  
+
+
+
+
+
 export default function CatalogoAdmin({ onBack }: { onBack: () => void }){
 
 
 
-const [bands,setBands] = useState<Band[]>([]);    // crea un vector llamado bands
+const [bands,setBands] = useState<Band[]>([]); 
 const [songs,setSongs] = useState<Song[]>([]);
 const [albums,setAlbums] = useState<Album[]>([]); 
-const [songform, setSongsform] = useState<Song>(emptySong);
-const [guardando,setGuardando] = useState(false);
-const [cantidadCanciones,setCantidadCanciones] = useState<formCancioncantidad[]>([])
 
 
-const agregarCancion = () =>
-  setCantidadCanciones(prev => [...prev, nuevaCancion()]);
+const [songsForm,setSongsForm]=useState<Song[]>([]);
+const agregarCancion = ()=> setSongsForm(prev=>[...prev,emptySong]);
+const quitarCancion = (posicion:number)=>  {console.log('posicion recibida:', posicion);setSongsForm((prev)=>prev.filter((_,i)=>{ return i!==posicion; }))}
 
-const quitarCancion = (id: number) =>
-  setCantidadCanciones(prev => prev.filter(c => c.id !== id));
+
+
+
+
+
+
+
+
 
 useEffect(() => {
-    // Al meterlo dentro de useEffect con [], SOLO se ejecuta una vez al cargar la pantalla
+    
     bandsApi.findAll()
       .then(data => setBands(data))
       .catch(err => console.error(err));
@@ -40,24 +51,55 @@ useEffect(() => {
   }, []);// rellena el vector con los datos de la db
 
 
-  const handleAlbum = (e: ChangeEvent<HTMLSelectElement>) => setSongsform({...songform, album:{id: Number(e.target.value)}});
-  const handleBand =(e : ChangeEvent<HTMLSelectElement>)=>  setSongsform({...songform,band:{id: Number(e.target.value)}});
+  //const handleAlbum = (e: ChangeEvent<HTMLSelectElement>) => setSongs(...songs, songs);
+  
+  //const handleBand =(e : ChangeEvent<HTMLSelectElement>)=>  setSongsform({...song,band:{id: Number(e.target.value)}});
+ 
   const handleSubmit = async (e: FormEvent) => {
+      setSongsForm(prev=>prev.map(
+        (c)=> {
+          c.band.
+          c.album.id = Number(e.target.value); }
+          
+      
+      
+      
+      
+      ))
+        
+      
+      )
+
+
+
+
+
+
+
+
+
+
+
+
+
     e.preventDefault(); 
-    if(songform.band.id === null  ) return alert ("elegi una banda");
+      if(songs.map((s,i)=>s.album?.id == null)  ) return alert ("elegi una banda");
 
     const res = await fetch("http://localhost:8080/api/songs", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(songform) });
+      body: JSON.stringify(songs) });
 
       if (!res.ok) return alert("Error al guardar");
-      setSongsform(emptySong);
+      setSongs([]);
 };
-  const handleChange = (e:ChangeEvent<HTMLInputElement>) => setSongsform({...songform,[e.target.name]:e.target.value});
+  const handleChange = (i:number,e:ChangeEvent<HTMLInputElement>) => setSongs(...songs);
 
+  const [cantidadCanciones,setCantidad]=useState<String[]>([]);
   
- 
+  const quitarCancion = (posicion:number)=>  {
+    console.log('posicion recibida:', posicion);
+    setCantidad((prev)=>prev.filter((_,i)=>{ return i!==posicion; }))}
 
 
 
@@ -65,6 +107,7 @@ useEffect(() => {
 
   return (
    <>
+
    <header>
       <div className="container text-center p-3">
       <h1>Administrador de Catalogo</h1>
@@ -82,11 +125,9 @@ useEffect(() => {
                   
                     <div className="col">
                       <label htmlFor="fieldBanda" className="form-label small mb-1">Banda</label>
-                      <select         value={songform.band.id}    onChange={handleBand}         id="fieldBanda"  className="form-select form-select-sm"  >
+                      <select value={songsForm}    onChange={handleBand}         id="fieldBanda"  className="form-select form-select-sm"  >
                       <option value={0}>Elegir...</option>
-                      { bands.map((o)=>(
-                        <option key={o.id} value={o.id}>{o.name}</option>
-                      ))}
+                      { bands.map((o)=>(<option key={o.id} value={o.id}>{o.name}</option>))}
                       </select>
                     </div>
 
@@ -94,46 +135,39 @@ useEffect(() => {
                       <label htmlFor="fieldalbum" className="form-label small mb-1">Nombre AlBum</label>
                       <input name="name"          value={songform.album?.name}      onChange={handleChange}       id="fieldNombre"     className="form-control form-control-sm"  placeholder="Nombre"/>
                     </div>
-                  
-                
 
 
-
-
-                <button id="btnAgregar" className="btn mt-2" onClick={AgregarCancion}>
-                  Agregar Cancion 
-                </button>
+                    
             </div>
 
-            <div id="formCancion" className="row">
+             <div id="formCancion" className="row">
                   <div className="col">
-                    <button type="button" className="btn btn-outline-danger" onClick={() => quitarCancion(i)} disabled={canciones.length === 1} aria-label="Quitar cancion">
-                    </button>
+                    <button id="btnAgregar" className="btn-success" onClick={agregarCancion}>+</button>
                   </div>
 
                   <div className="col">
                     <label htmlFor="fieldNombre" className="form-label small mb-1">Nombre</label>
-                    <input name="name"          value={songform.name}      onChange={handleChange}       id="fieldNombre"     className="form-control form-control-sm"  placeholder="Nombre"/>
+                    <input name="name"          value={songform.name}      onChange={(e)=>handleChange(e)}       id="fieldNombre"     className="form-control form-control-sm"  placeholder="Nombre"/>
                   </div>
 
                   <div className="col">
                     <label htmlFor="fieldGenero" className="form-label small mb-1">Genero</label>
-                    <input name="genere" value={songform.genere}      onChange={handleChange} className="form-control form-control-sm" id="fieldGenero" placeholder="genero"/>
+                    <input name="genere" value={songform.genere}      onChange={(e)=>handleChange(e)} className="form-control form-control-sm" id="fieldGenero" placeholder="genero"/>
                   </div>
 
                   <div className="col">
                     <label htmlFor="fieldLanzamiento" className="form-label small mb-1">Lanzamiento</label>
-                    <input name="release" value={songform.release}      onChange={handleChange} type="date" className="form-control form-control-sm" id="fieldLanzamiento" aria-label="Date picker" />
+                    <input name="release" value={songform.release}      onChange={(e)=>handleChange(e)} type="date" className="form-control form-control-sm" id="fieldLanzamiento" aria-label="Date picker" />
                   </div>
 
                   <div className="col">
                     <label htmlFor="fieldISRC" className="form-label small mb-1">ISRC</label>
-                    <input name="isrc" value={songform.isrc}      onChange={handleChange} className="form-control form-control-sm" id="fielISRC" placeholder="codigo Isrc"/>
+                    <input name="isrc" value={songform.isrc}      onChange={(e)=>handleChange(e)} className="form-control form-control-sm" id="fielISRC" placeholder="codigo Isrc"/>
                   </div>
 
                   <div className="col">
                     <label htmlFor="fieldSpotify" className="form-label small mb-1">Spotify</label>
-                    <input name="spotifyurl" value={songform.spotifyurl}      onChange={handleChange} className="form-control form-control-sm" id="fieldSpotify" placeholder="UrlSpotify"/>
+                    <input name="spotifyurl" value={songform.spotifyurl}      onChange={(e)=>handleChange(e)} className="form-control form-control-sm" id="fieldSpotify" placeholder="UrlSpotify"/>
                   </div>
 
                   <div className="col">
@@ -145,20 +179,19 @@ useEffect(() => {
                     <label htmlFor="fieldYoutube" className="form-label small mb-1">Youtube</label>
                     <input name="youtubeurl" value={songform.youtubeurl}      onChange={handleChange} className="form-control form-control-sm" id="fieldYoutube" placeholder="UrlYoutube"/>
                   </div>
-                </div>
-
-
-                      
-              {cantidadCanciones.map(()=>(
+            </div>
+      
+              {cantidadCanciones.map((p,l)=>(
                 <div id="formCancion" className="row">
-                
                   <div className="col">
-                    
+                    <button id="btnAgregar" className="btn-success" onClick={()=>quitarCancion(l)}>-</button>
+                  </div>
+                  
+                  <div className="col">
                     <input name="name"          value={songform.name}      onChange={handleChange}       id="fieldNombre"     className="form-control form-control-sm"  placeholder="Nombre"/>
                   </div>
 
                   <div className="col">
-                    
                     <input name="genere" value={songform.genere}      onChange={handleChange} className="form-control form-control-sm" id="fieldGenero" placeholder="genero"/>
                   </div>
 
@@ -193,10 +226,16 @@ useEffect(() => {
 
 
           <div className="">
-                  <button type="submit" className="btn btn-sm btn-outline-secondary w-100" disabled={guardando}> Registrar Tema </button>           
+                <div>
+                  <button type="submit" className="btn btn-sm btn-outline-secondary w-100"> Registrar Tema </button>           
                 </div> 
           </div>
-                                
+
+
+
+
+
+        </div>          
       </form>
 
         <div className="container mt-4">
