@@ -4,27 +4,27 @@ export const BASE_URL = "http://localhost:8080/api"; // en el celular: la IP de 
 
 export interface Band {
   id?: number;
-  name: string;
-  ubication: string;
-  genere: string;
+  name?: string;
+  ubication?: string;
+  genere?: string;
 }
 
 export interface Album {
   id?: number;
-  name: string;
-  release: string;
-  amountsongs: number;
-  band: { id: number; name?: string };
+  name?: string;
+  release?: string;
+  amountsongs?: number;
+  band?: { id?: number; name?: string };
 }
 
 export interface Song {
   id?: number;
-  name: string;
-  isrc: string;
-  genere: string;
-  release: string;
-  band: { id: number; name?: string };
-  album?: { id: number; name?: string };
+  name?: string;
+  isrc?: string;
+  genere?: string;
+  release?: string;
+  band: { id?: number; name?: string };
+  album: { id?: number; name?: string; release?: string; amountsongs?:number; band?:{id?:number;name?:string};  };
   spotifyurl?: string;
   youtubeurl?: string;
   appleurl?: string;

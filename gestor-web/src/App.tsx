@@ -1,8 +1,9 @@
 import { useState } from "react";
 import PitchPlaylist from "./views/PitchPlaylist";
 import CatalogAdmin from "./views/CatalogAdmin";
+import PlaylistRegister from "./views/PlaylistRegister";
 
-type View = "menu" | "catalogo" | "pitch" | "contactos";
+type View = "menu" | "catalogo" | "pitch" | "contactos" | "registroplaylist";
 
 function Placeholder({ title, onBack }: { title: string; onBack: () => void }) {
   return (
@@ -22,7 +23,7 @@ function App() {
   if (view === "pitch") return (<PitchPlaylist onBack={back} />);
   if (view === "catalogo") return (<CatalogAdmin onBack={back} />);
   if (view === "contactos")return <Placeholder title="Administrador de contactos" onBack={back} />;
-
+  if (view === "registroplaylist") return (<PlaylistRegister onBack={back} />);
   return (
     <>
       <header className="bg-dark text-white py-4">
@@ -42,6 +43,9 @@ function App() {
           </button>
           <button className="btn btn-primary btn-lg" onClick={() => setView("contactos")}>
             Administrador de contactos
+          </button>
+          <button className="btn btn-primary btn-lg" onClick={() => setView("registroplaylist")}>
+            Registrar Playlist
           </button>
         </div>
       </main>

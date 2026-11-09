@@ -12,7 +12,7 @@ public class SongController extends BaseController<Song,Long>{
         super(service);
     }
 
-    @PostMapping("/")
+    @PostMapping
     public Song create(@RequestBody Song s) { return service.add(s);}
 
     @PutMapping("/{id}")
