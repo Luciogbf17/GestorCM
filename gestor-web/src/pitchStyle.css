@@ -1,0 +1,21 @@
+.tabla-compacta th,
+.tabla-compacta td {
+  padding: 0.15rem 0.4rem;
+  font-size: 0.75rem;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.tabla-compacta td {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.desc-corta {
+  max-width: 250px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;        /* cantidad de líneas */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
