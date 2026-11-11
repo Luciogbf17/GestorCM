@@ -28,6 +28,7 @@ public class Album {
     private Band band;
     private String genere;
     private String name;
-    private LocalDate release_date;
+    @Column(name = "release_date")
+    private LocalDate release;
     private int amountsongs;
 }

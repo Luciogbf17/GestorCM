@@ -1,251 +1,198 @@
-import { useEffect, useMemo, useState } from "react";
-import { playlistApi,songApi } from "../api/client";
-import type { Playlist,Song } from "../api/client";
+import { useEffect, useState } from "react"
+import { songApi,albumApi,bandsApi,playlistApi } from "../api/client"
+import type { Song,Album,Band,Playlist } from "../api/client"
+import "../pitchStyle.css";
+import test from "node:test";
 
-const BASE_URL = "http://localhost:8080/playlist";
-const PAGE_SIZE = 25;
-
-
+const crearCancionVacia = (): Song => ({
+  name: "",
+  isrc: "",
+  genere: "",
+  release: "",
+  band: { id: 0 },
+  album: { name: "", amountsongs:0, release:"",band:{name:""} },
+  appleurl: "",
+  spotifyurl: "",
+  youtubeurl: "",
+});
 
 export default function PitchPlaylist({ onBack }: { onBack: () => void }) {
-  const [playlists, setPlaylists] = useState<Playlist[]>([]);
-  const [songs, setSongs] = useState<Song[]>([]);
-  const [email, setEmail] = useState("");
-  const [songId, setSongId] = useState("");
-  const [selected, setSelected] = useState<Set<number>>(new Set()); // índices en playlists
-  const [filter, setFilter] = useState("");
-  const [page, setPage] = useState(0);
-  const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    // Al meterlo dentro de useEffect con [], SOLO se ejecuta una vez al cargar la pantalla
-    playlistApi.findAll()
-      .then(data => setPlaylists(data))
-      .catch(err => console.error(err));
-  }, []); // <-- ¡ESTE ARRAY VACÍO ES CLAVE PARA DETENER EL BUCLE!
-
-  
- useEffect(() => {
-    // Al meterlo dentro de useEffect con [], SOLO se ejecuta una vez al cargar la pantalla
-    songApi.findAll()
-      .then(data => setSongs(data))
-      .catch(err => console.error(err));
-  }, []); // <-- ¡ESTE ARRAY VACÍO ES CLAVE PARA DETENER EL BUCLE!
-
-  
-  
-
-  const rows = useMemo(() => {
-    // "rock, reggaeton, argentina" -> ["rock", "reggaeton", "argentina"]
-    const terms = filter
-      .split(",")
-      .map((t) => t.trim().toLowerCase())
-      .filter(Boolean);
-    const all = playlists.map((p, i) => ({ p, i }));
-    if (terms.length === 0) return all;
-    return all.filter(({ p }) => {
-      const text = [p.title, p.contact, p.genres, p.location]
-        .join(" ")
-        .toLowerCase();
-      return terms.some((t) => text.includes(t)); // coincide con ALGUNO
-    });
-  }, [playlists, filter]);
-
-  const pages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
-  const visible = rows.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
-
-  const hasMail = (p: Playlist) => !!p.emailAddress?.trim();
-
-  const toggle = (i: number) =>
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (next.has(i)) next.delete(i);
-      else next.add(i);
-      return next;
-    });
-
-  // Selecciona / deselecciona todas las playlists con mail de la página visible
-  const selectable = visible.filter(({ p }) => hasMail(p));
-  const allVisibleSelected =
-    selectable.length > 0 && selectable.every(({ i }) => selected.has(i));
-  const toggleVisible = () =>
-    setSelected((prev) => {
-      const next = new Set(prev);
-      selectable.forEach(({ i }) =>
-        allVisibleSelected ? next.delete(i) : next.add(i),
-      );
-      return next;
-    });
-
-  const send = () => {
-    if (!email || !songId || selected.size === 0 || !message.trim()) {
-      alert("Completá tu mail, el tema, al menos una playlist y el mensaje.");
-      return;
-    }
-    const pitches = [...selected].map((i) => ({
-      from: email,
-      songId: Number(songId),
-      to: playlists[i].emailAddress,
-      playlist: playlists[i].title,
-      message,
-    }));
-    console.log("Pitches listos para enviar:", pitches); // TODO: POST a tu backend
-    alert(`Pitch preparado para ${pitches.length} playlist(s)`);
-  };
-
-  return (
-    <main className="container py-4">
-      <button className="btn btn-outline-secondary mb-3" onClick={onBack}>
-        ← Volver al menú
-      </button>
-      <h2 className="mb-4">Pitch a playlist</h2>
-
-      <div className="row g-3 mb-4">
-        <div className="col-12 col-md-6">
-          <label className="form-label" htmlFor="mail">Tu mail</label>
-          <input
-            id="mail"
-            type="email"
-            className="form-control"
-            placeholder="vos@ejemplo.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div className="col-12 col-md-6">
-          <label className="form-label" htmlFor="song">Tema</label>
-          <select
-            id="song"
-            className="form-select"
-            value={songId}
-            onChange={(e) => setSongId(e.target.value)}
-          >
-            <option value="">Seleccionar tema...</option>
-            {songs.map((s) => (
-              <option key={s.id} value={s.id}>{s.name}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <h3 className="h5">Seleccionar playlist</h3>
-      <input
-        className="form-control mb-3"
-        placeholder="Separá con comas: rock, reggaeton, argentina, brasil"
-        value={filter}
-        onChange={(e) => {
-          setFilter(e.target.value);
-          setPage(0);
-        }}
-      />
-
-      <div className="table-responsive border rounded" style={{ maxHeight: 420 }}>
-        <table className="table table-hover table-sm align-middle mb-0">
-          <thead className="table-light sticky-top">
-            <tr>
-              <th>
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  title="Seleccionar todas las de esta página con mail"
-                  checked={allVisibleSelected}
-                  onChange={toggleVisible}
-                />
-              </th>
-              <th>Playlist</th>
-              <th>Contacto</th>
-              <th>Email</th>
-              <th>Seguidores</th>
-              <th>Géneros</th>
-              <th>Ciudad</th>
-              <th>Link</th>
-            </tr>
-          </thead>
-          <tbody>
-            {visible.map(({ p, i }) => {
-              const ok = hasMail(p);
-              return (
-              <tr
-                key={i}
-                className={selected.has(i) ? "table-primary" : !ok ? "text-muted" : ""}
-                onClick={() => ok && toggle(i)}
-                style={{ cursor: ok ? "pointer" : "not-allowed" }}
-                title={ok ? "" : "Falta el mail de esta playlist"}
-              >
-                <td>
-                  <span title={ok ? "" : "Falta el mail de esta playlist"}>
-                    <input
-                      type="checkbox"
-                      className="form-check-input"
-                      disabled={!ok}
-                      checked={selected.has(i)}
-                      onChange={() => toggle(i)}
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  </span>
-                </td>
-                <td>{p.title}</td>
-                <td>{p.contact}</td>
-                <td>{p.emailAddress}</td>
-                <td>{p.followers}</td>
-                <td>{p.genres}</td>
-                <td>{p.location}</td>
-                <td>
-                  {p.playlistUrl && (
-                    <a
-                      href={`https://${p.playlistUrl}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      Abrir
-                    </a>
-                  )}
-                </td>
-              </tr>
-              );
-            })}
-            {visible.length === 0 && (
-              <tr>
-                <td colSpan={8} className="text-center text-muted py-3">
-                  Sin resultados
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="d-flex justify-content-between align-items-center my-2">
-        <small className="text-muted">{rows.length} playlists · {selected.size} seleccionadas</small>
-        <div className="btn-group btn-group-sm">
-          <button className="btn btn-outline-secondary" disabled={page === 0} onClick={() => setPage(page - 1)}>
-            Anterior
-          </button>
-          <span className="btn btn-outline-secondary disabled">
-            {page + 1} / {pages}
-          </span>
-          <button className="btn btn-outline-secondary" disabled={page + 1 >= pages} onClick={() => setPage(page + 1)}>
-            Siguiente
-          </button>
-        </div>
-      </div>
-
-      <div className="mt-4">
-        <label className="form-label" htmlFor="msg">Mensaje del mail</label>
-        <textarea
-          id="msg"
-          className="form-control"
-          rows={6}
-          placeholder="Escribí acá el mail para el curador..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
-      </div>
-
-      <button className="btn btn-primary btn-lg mt-3" onClick={send}>
-        Mandar pitch a {selected.size} playlist(s)
-      </button>
-    </main>
+const LinkCelda = ({ url, label }: { url?: string | null; label: string }) =>
+  url ? (
+    <a href={url} target="_blank" rel="noopener noreferrer" title={url}>
+      {label}
+    </a>
+  ) : (
+    <span className="text-muted">-</span>
   );
+
+
+
+const [bands,setBands] = useState<Band[]>([]); 
+const [songs,setSongs] = useState<Song[]>([]);
+const [albums,setAlbums] = useState<Album[]>([]); 
+const [playlists,setPlaylists]= useState<Playlist[]>([]);
+const [playlistsTable,setPlaylistsTable]= useState<Playlist[]>([]);
+
+const [songsForm,setSongsForm] = useState<Song[]>([crearCancionVacia()]);
+
+const cargarDatos= async()=>{
+    await bandsApi.findAll()
+      .then(data => setBands(data))
+      .catch(err => console.error(err));
+
+    await  songApi.findAll()
+    .then(data => setSongs(data))
+    .catch(err => console.error(err));
+
+    await  albumApi.findAll()
+    .then (data => setAlbums(data) )
+    .catch(err => console.error(err));
+
+    await playlistApi.findAll()
+    .then(data=>setPlaylists(data))
+    .catch(err=> console.error(err));
+    
+    
+    
+};
+
+const tableFilter = (f: string) => {
+  
+  if (!f || !f.trim()) {
+    setPlaylistsTable(playlists);
+    return; 
+  }
+
+  
+  const values = f.split(",").map((item) => item.trim()).filter(Boolean);
+
+  
+  const filtradas = playlists.filter((p) =>
+    values.some((v) => {
+      const busqueda = v.toLowerCase();
+    
+        const generoPlaylist = p.genres?.toLowerCase() || "";
+        const ubicacionPlaylist = p.location?.toLowerCase() || "";
+
+      
+      return generoPlaylist.includes(busqueda) || ubicacionPlaylist.includes(busqueda);
+    })
+  );
+ setPlaylistsTable(filtradas);
+};
+
+
+
+
+useEffect(() => {
+    cargarDatos()
+    
+  }, []);// rellena el vector con los datos de la db
+ 
+
+
+ return(<>
+    <header>
+        <div className="container text-center">
+            <h1 className="h1 ">PITCH A PLAYLIST</h1>
+        </div>
+    
+    </header>
+
+    <main>
+        <form className="form form-control-sm" action="">
+        <div className="container" style={{maxWidth:1020}}>
+            <div className="row" >
+                
+                    <div className="col align-content-center">
+                        <select className="form-select form-select-sm " name="" id="">
+                            {songs.map((s,i)=>
+                                <option key={s.id} value={s.id}>{s.name}</option>
+                            )}
+                        </select>
+                    </div>
+                    
+                    <div className="col">
+                        <select className="form-select form-select-sm " name="" id="">{ bands.map((b)=><option value={b.id}>{b.name}</option>)}</select>
+                    </div>
+                    
+            </div>
+
+            
+        </div>
+        </form>
+
+        <div>
+            <form action="">
+                <div className="container" style={{maxWidth:1020}}>
+                    <div className="row">
+                    <div className="col mt-2">
+                        <label className="form-label" htmlFor="">BUSCAR</label>
+                        <input className= "form-control form-control-sm"type="text" name="" id="" placeholder="Buscar por genero,pais,nombre (siempre seguido de una coma)" onChange={(e)=>tableFilter(e.target.value)} />
+                    </div>
+                </div>
+                </div>
+            </form>
+
+            <div className="container mt-3" style={{maxWidth:1580}}>    
+            <div className="table-responsive " style={{ maxHeight: "60vh" }}>           
+                <table className="table table-hover tabla-compacta table-dark table-sm align-middle mb-0">
+                
+                    <thead className="sticky-top bg-light">
+                        <tr>
+                            <th scope="col">Seleccion</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Descripcion</th>
+                            <th scope="col">Generos</th>
+                            <th scope="col">Seguidores</th>
+                            <th scope="col">Ubicacion</th>
+                            <th scope="col">Spoty Url</th>
+                            <th scope="col">Mail</th>
+                            <th scope="col">Contacto</th>
+                            <th scope="col">para Envio</th>
+                            <th scope="col">Instagram</th>
+                            <th scope="col">Website</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {playlistsTable.map((p)=>
+                        
+                            <tr>
+                                <th scope="row"></th>
+                                <td >{p.title}</td>
+                                <td> <div className="desc-corta" title={p.description ?? ""}> {p.description}</div>   </td>
+                                <td>{p.genres}</td>
+                                <td>{p.followers}</td>
+                                <td>{p.location}</td>
+                                <td><LinkCelda url={p.playlistUrl} label="PlayList URL"/></td>
+                                <td>{p.emailAddress}</td>
+                                <td>{p.contact}</td>
+                                <td><LinkCelda url={p.submissionPage} label="Envio"/></td>
+                                <td><LinkCelda url={p.instagram} label="Instagram"/></td>
+                                <td><LinkCelda url={p.website} label="WebSite"/></td>
+                            </tr>
+                        
+                        
+                        
+                        )}
+                    </tbody>
+                
+                </table>
+            </div>
+            </div>
+        </div>
+        <div className="row p-3 justify-content-end">
+            <button className="btn btn-outline-secondary w-25 h-25" onClick={onBack}>
+                ← Volver al menú
+            </button>           
+        </div>   
+
+    </main>
+    
+    
+    
+    
+    </>)
 }

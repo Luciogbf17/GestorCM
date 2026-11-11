@@ -36,7 +36,12 @@ const [songsForm,setSongsForm]=useState<Song[]>([crearCancionVacia()]);
 
 
 const agregarCancion = ()=> setSongsForm(prev=>[...prev,crearCancionVacia()]);
-const quitarCancion = (posicion:number)=>  {console.log('posicion recibida:', posicion);setSongsForm((prev)=>prev.filter((_,i)=>{ return i!==posicion; }))}
+const eliminarCancion =(i:number)=>(setSongsForm((prev)=>prev.filter((_,p)=>p!=i)))
+const borrarCancion=async (i: number)=>{
+  if(songs[i].id == null) return; 
+  await songApi.delete(songs[i].id);
+  cargarDatos();
+};
 
 
 
@@ -44,22 +49,23 @@ const quitarCancion = (posicion:number)=>  {console.log('posicion recibida:', po
 
 
 
-
-
-useEffect(() => {
-    
-    bandsApi.findAll()
+const cargarDatos= async()=>{
+  await bandsApi.findAll()
       .then(data => setBands(data))
       .catch(err => console.error(err));
 
-    songApi.findAll()
+   await  songApi.findAll()
     .then(data => setSongs(data))
     .catch(err => console.error(err));
 
-    albumApi.findAll()
+  await  albumApi.findAll()
     .then (data => setAlbums(data) )
     .catch(err => console.error(err));
+};
 
+useEffect(() => {
+    cargarDatos()
+    
   }, []);// rellena el vector con los datos de la db
 
 
@@ -76,10 +82,6 @@ useEffect(() => {
     setSongsForm((prev)=> prev.map((s) => ({ ...s, band: { ...s.band, id } })))
   }
 
-   
-
-  
-
  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     
@@ -91,24 +93,14 @@ useEffect(() => {
 
     const a= (await albumApi.create(dAlbum)).id;
 
-    
-    const comprobacion= () =>{songsForm[0].band.id==null? alert("Ingresar Banda"): 
-      songsForm[0].album.name==null? alert("ingrese Nombre de Album"): true}
-    
-
-
-
-   const s= songsForm.map((s)=>({...s,album:{...s.album,id:a}}));
-   comprobacion();
+    const s= songsForm.map((s)=>({...s,album:{...s.album,id:a}}));
+  
     await Promise.all(s.map((s)=>songApi.create(s))); //el promise.all espera a que se carguen todas sin error
 
     setSongsForm([crearCancionVacia()]);
-
-
+    cargarDatos();
   }
   
-
-
   const handleAlbum = (e: ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
       setSongsForm((prev) =>prev.map((s) => ({...s,album: {...s.album,name: value,} })));
@@ -134,7 +126,7 @@ useEffect(() => {
    
    <main>
       <form action=""  >
-          <div className="container" style={{ maxWidth: 820 }}>
+          <div className="container" style={{ maxWidth: 1020 }}>
            
 
             
@@ -163,7 +155,7 @@ useEffect(() => {
                 
               
                   <div className="col mb-2">
-                    <button type="button" id="btnAgregar" className="btn btn-success d-flex align-items-center justify-content-center btn-sm  " onClick={agregarCancion} style={{ height: 30, width: 30 }}>+</button>
+                    <button type="button" id="btnAgregar" className="btn btn-success d-flex align-items-center justify-content-center  " onClick={agregarCancion} style={{ height: 30, width: 30 }}>+</button>
                   </div>
 
                   <div className="col mb-2">
@@ -195,7 +187,7 @@ useEffect(() => {
                     <label htmlFor="fieldApple" className="form-label small mb-1">Apple</label>
                     <input name="appleurl" value={songsForm[0].appleurl}      onChange={(e)=>(handleChange(e,0))} className="form-control form-control-sm" id="fieldApple" placeholder="UrlApple"/>
                   </div>
-
+                
                   <div className="col mb-2">
                     <label htmlFor="fieldYoutube" className="form-label small mb-1">Youtube</label>
                     <input name="youtubeurl" value={songsForm[0].youtubeurl}      onChange={(e)=>(handleChange(e,0))} className="form-control form-control-sm" id="fieldYoutube" placeholder="UrlYoutube"/>
@@ -208,7 +200,7 @@ useEffect(() => {
                 0==l? null :
                 <div id="formCancion" className="row">
                   <div className="col mb-2">
-                    <button type="button" id="btnAgregar" className="btn btn-danger btn-sm d-flex align-items-center justify-content-center" style={{ height: 30, width: 30 }} onClick={()=>quitarCancion(l)}> -</button>
+                    <button type="button" id="btnAgregar" className="btn btn-danger btn-sm d-flex align-items-center justify-content-center" style={{ height: 30, width: 30 }} onClick={()=>eliminarCancion(l)}> -</button>
                   </div>
                   
                   <div className="col mb-2">
@@ -284,7 +276,7 @@ useEffect(() => {
                 </td>
               </tr>
             ) : (
-              songs.map((s) => (
+              songs.map((s,i) => (
      // Ajustar los nombres de los campos a lo que devuelva tu API
                 <tr key={s.id}>
                   <th scope="row">{s.id}</th>
@@ -293,6 +285,9 @@ useEffect(() => {
                   <td>{s.genere}</td>
                   <td>{s.release}</td>
                   <td>{s.isrc}</td>
+                  <td>
+                    <button className="btn btn-danger" onClick={()=>borrarCancion(i)}>x</button>
+                  </td>
                 </tr>
               ))
             )}

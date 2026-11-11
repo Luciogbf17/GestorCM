@@ -29,7 +29,8 @@ public class Song {
     @JsonIgnoreProperties("albums")
     private Band band;
 
-    private LocalDate release_date;
+    @Column(name = "release_date")
+    private LocalDate release;
 
     @ManyToOne
     @JoinColumn(name = "album_id")

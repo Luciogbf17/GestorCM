@@ -16,22 +16,22 @@ public class Playlist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title", columnDefinition = "TEXT")
+    @Column(name = "Title", columnDefinition = "TEXT")
     private String title;
 
-    @Column(name = "apple_music", columnDefinition = "TEXT")
+    @Column(name = "Apple Music", columnDefinition = "TEXT")
     private String appleMusic;
 
-    @Column(name = "contact", columnDefinition = "TEXT")
+    @Column(name = "Contact", columnDefinition = "TEXT")
     private String contact;
 
-    @Column(name = "deezer", columnDefinition = "TEXT")
+    @Column(name = "Deezer", columnDefinition = "TEXT")
     private String deezer;
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "email_address", length = 255)
+    @Column(name = "Email Address", length = 255)
     private String emailAddress;
 
     @Column(name = "facebook", columnDefinition = "TEXT")
@@ -52,10 +52,10 @@ public class Playlist {
     @Column(name = "location", length = 255)
     private String location;
 
-    @Column(name = "playlist_url", columnDefinition = "TEXT")
+    @Column(name = "playlist URL", columnDefinition = "TEXT")
     private String playlistUrl;
 
-    @Column(name = "playlists_count")
+    @Column(name = "playlists")
     private Integer playlistsCount;
 
     @Column(name = "property", columnDefinition = "TEXT")
@@ -64,7 +64,7 @@ public class Playlist {
     @Column(name = "soundcloud", columnDefinition = "TEXT")
     private String soundCloud;
 
-    @Column(name = "submission_page", columnDefinition = "TEXT")
+    @Column(name = "Submission Page", columnDefinition = "TEXT")
     private String submissionPage;
 
     @Column(name = "twitter", columnDefinition = "TEXT")

@@ -31,27 +31,27 @@ export interface Song {
 }
 
 export interface Playlist {
-  id?: number;
-  title?: string;
-  appleMusic?: string;
-  contact?: string;
-  deezer?: string;
-  description?: string;
-  emailAddress?: string;
-  facebook?: string;
-  followers?: number;
-  genres?: string;
-  instagram?: string;
-  linkedIn?: string;
-  location?: string;
-  playlistUrl?: string;
-  playlistsCount?: number;
-  property?: string;
-  soundCloud?: string;
-  submissionPage?: string;
-  twitter?: string;
-  website?: string;
-  youtube?: string;
+  id: number;
+  title?: string | null;
+  appleMusic?: string | null;
+  contact?: string | null;
+  deezer?: string | null;
+  description?: string | null;
+  emailAddress?: string | null;
+  facebook?: string | null;
+  followers?: number | null;
+  genres?: string | null;
+  instagram?: string | null;
+  linkedIn?: string | null;
+  location?: string | null;
+  playlistUrl?: string | null;
+  playlistsCount?: number | null;
+  property?: string | null;
+  soundCloud?: string | null;
+  submissionPage?: string | null;
+  twitter?: string | null;
+  website?: string | null;
+  youtube?: string | null;
 }
 
 export function crud<T>(endpoint: string){
@@ -76,10 +76,13 @@ export function crud<T>(endpoint: string){
     });
     if(!res.ok) throw new Error (`Error al crear: (${res.status})`);
     return res.json();
-
-
-    
   },
+  delete: async (id: number): Promise<void> => {
+      const res = await fetch(`${BASE_URL}${endpoint}/${id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error(`Error al eliminar: (${res.status})`);
+    },
 
   }
 }
